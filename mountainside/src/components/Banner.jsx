@@ -3,7 +3,13 @@ import './Banner.css';
 
 const Banner = () => {
   return (
-    <section id="banner" className="banner">
+    <section
+      id="banner"
+      className="banner"
+      style={{
+        backgroundImage: `url(${process.env.PUBLIC_URL}/images/one.jpg)`
+      }}
+    >
       <h1>Mountainside Drive</h1>
       <p>Welcome to our scenic lakeside retreat in the Blue Ridge Mountains.</p>
     </section>
