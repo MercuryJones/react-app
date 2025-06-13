@@ -1,0 +1,22 @@
+.banner {
+    height: 100vh;
+    background: url('/images/one.jpg') center center/cover no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+    padding: 2rem;
+    text-align: center;
+  }
+  
+  .banner h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+  
+  .banner p {
+    font-size: 1.25rem;
+  }
+  
