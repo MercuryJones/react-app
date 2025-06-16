@@ -23,12 +23,11 @@ import React from 'react';
 
 const App = () => {
   return (
-    <div style={{ padding: '2rem', backgroundColor: 'white' }}>
-      <h1>✅ It works!</h1>
-      <p>Your React app is now properly rendering through GitHub Pages.</p>
+    <div style={{ padding: '2rem', backgroundColor: 'red', color: 'white' }}>
+      <h1>✅ IT WORKS</h1>
+      <p>This is visible. If you don’t see this, something is blocking render.</p>
     </div>
   );
 };
 
 export default App;
-
