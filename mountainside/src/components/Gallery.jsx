@@ -12,7 +12,7 @@ const Gallery = () => {
         {galleryImages.map((image, index) => (
           <GalleryImage
             key={index}
-            src={`/images/${image}`}
+            src={`${import.meta.env.BASE_URL}images/${image}`}
           />
         ))}
       </div>

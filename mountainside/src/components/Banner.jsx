@@ -7,7 +7,7 @@ const Banner = () => {
       id="banner"
       className="banner"
       style={{
-        backgroundImage: `/images/one.jpg)`
+        backgroundImage: `url(${import.meta.env.BASE_URL}images/one.jpg)`
       }}
     >
       <h1>Mountainside Drive</h1>
