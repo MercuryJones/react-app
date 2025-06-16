@@ -19,7 +19,6 @@
 
 // export default App;
 
-
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
@@ -32,8 +31,8 @@ const App = () => {
           path="/"
           element={
             <div style={{ padding: '2rem', backgroundColor: 'white' }}>
-              <h1>✅ Router works!</h1>
-              <p>This is being rendered by the default route.</p>
+              <h1>✅ React is working!</h1>
+              <p>This is rendering through React Router on GitHub Pages.</p>
             </div>
           }
         />
