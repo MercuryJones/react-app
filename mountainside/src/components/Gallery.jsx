@@ -12,7 +12,7 @@ const Gallery = () => {
         {galleryImages.map((image, index) => (
           <GalleryImage
             key={index}
-            src={`${process.env.PUBLIC_URL}/images/${image}`}
+            src={`/images/${image}`}
           />
         ))}
       </div>

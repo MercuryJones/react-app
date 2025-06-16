@@ -21,7 +21,7 @@ const Restaurants = () => {
         {restaurantData.map((restaurant, index) => (
           <RestaurantCard
             key={index}
-            src={`${process.env.PUBLIC_URL}/images/${restaurant.image}`}
+            src={`/images/${restaurant.image}`}
             name={restaurant.name}
           />
         ))}

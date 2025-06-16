@@ -7,7 +7,7 @@ const Banner = () => {
       id="banner"
       className="banner"
       style={{
-        backgroundImage: `url(${process.env.PUBLIC_URL}/images/one.jpg)`
+        backgroundImage: `/images/one.jpg)`
       }}
     >
       <h1>Mountainside Drive</h1>

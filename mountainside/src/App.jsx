@@ -19,15 +19,15 @@
 
 // export default App;
 
-import React from 'react';
+import Home from './pages/Home';
+import './App.css';
 
-const App = () => {
+function App() {
   return (
-    <div style={{ padding: '2rem', backgroundColor: 'red', color: 'white' }}>
-      <h1>✅ IT WORKS</h1>
-      <p>This is visible. If you don’t see this, something is blocking render.</p>
-    </div>
+    <>
+      <Home />
+    </>
   );
-};
+}
 
 export default App;
