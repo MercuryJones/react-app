@@ -4,7 +4,7 @@ import './GalleryImage.css';
 const GalleryImage = ({ src }) => {
   return (
     <div className="gallery-image">
-      <img src={src} alt="Gallery Item" />
+      <img src={src} alt="Gallery item" />
     </div>
   );
 };
