@@ -20,25 +20,15 @@
 // export default App;
 
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import './App.css';
 
 const App = () => {
   return (
-    <BrowserRouter basename={process.env.PUBLIC_URL}>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <div style={{ padding: '2rem', backgroundColor: 'white' }}>
-              <h1>✅ React is working!</h1>
-              <p>This is rendering through React Router on GitHub Pages.</p>
-            </div>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+    <div style={{ padding: '2rem', backgroundColor: 'white' }}>
+      <h1>✅ It works!</h1>
+      <p>Your React app is now properly rendering through GitHub Pages.</p>
+    </div>
   );
 };
 
 export default App;
+
