@@ -1,11 +1,13 @@
-import React from 'react';
+import { Link } from 'react-router-dom';
 import './Contact.css';
 
 const Contact = () => {
   return (
     <section className="contact-page">
       <h2>Contact Us</h2>
-      <p>For inquiries, please email us at: <a href="mailto:info@mountainsidedrive.com">info@mountainsidedrive.com</a></p>
+      <p>Email: johnarcherhatch@gmail.com</p>
+      <p>Phone: (434) 439-0150</p>
+      <Link to="/" className="back-link">← Back to Home</Link>
     </section>
   );
 };
