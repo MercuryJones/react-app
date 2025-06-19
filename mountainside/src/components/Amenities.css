@@ -53,6 +53,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    width: 90%;
+    max-width: 500px;
   }
   
   .modal-content {
@@ -60,4 +66,17 @@
     padding: 2rem;
     border-radius: 8px;
   }
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
   

@@ -1,4 +1,4 @@
-// Amenities.jsx
+//Amenities.jsx
 import { useState, useEffect } from "react";
 import "./Amenities.css";
 
@@ -19,93 +19,89 @@ const Amenities = () => {
     fetchAmenities();
   }, []);
 
-  const handleChange = (e) => {
+  const handleFormChange = (e) => {
     const { name, value, files } = e.target;
-    if (name === "image") {
-      setFormData({ ...formData, image: files[0] });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
+    setFormData((prev) => ({
+      ...prev,
+      [name]: files ? files[0] : value,
+    }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleAdd = async (e) => {
     e.preventDefault();
-    const body = new FormData();
-    body.append("name", formData.name);
-    body.append("description", formData.description);
-    if (formData.image) body.append("image", formData.image);
+    const newForm = new FormData();
+    newForm.append("name", formData.name);
+    newForm.append("description", formData.description);
+    newForm.append("image", formData.image);
 
     const res = await fetch("https://mountainsidenode.onrender.com/api/amenities", {
       method: "POST",
-      body
+      body: newForm,
     });
 
     if (res.ok) {
-      const newAmenity = await res.json();
-      setAmenities([...amenities, newAmenity]);
-      setStatus("Amenity added!");
       setFormData({ name: "", description: "", image: null });
+      setStatus("Amenity added!");
+      fetchAmenities();
     } else {
-      const error = await res.json();
-      setStatus(`Error: ${error.error}`);
+      const err = await res.json();
+      setStatus(`Error: ${err.error}`);
     }
   };
 
   const handleDelete = async (id) => {
     const res = await fetch(`https://mountainsidenode.onrender.com/api/amenities/${id}`, {
-      method: "DELETE"
+      method: "DELETE",
     });
     if (res.ok) {
-      setAmenities(amenities.filter(a => a.id !== id));
+      setAmenities((prev) => prev.filter((a) => a.id !== id));
     }
   };
 
-  const handleEdit = (amenity) => {
+  const openEditModal = (amenity) => {
     setEditingAmenity(amenity);
     setFormData({ name: amenity.name, description: amenity.description, image: null });
     setShowModal(true);
   };
 
-  const handleUpdate = async (e) => {
+  const handleEdit = async (e) => {
     e.preventDefault();
-    const body = new FormData();
-    body.append("name", formData.name);
-    body.append("description", formData.description);
-    if (formData.image) body.append("image", formData.image);
+    const updateForm = new FormData();
+    updateForm.append("name", formData.name);
+    updateForm.append("description", formData.description);
+    if (formData.image) updateForm.append("image", formData.image);
 
     const res = await fetch(`https://mountainsidenode.onrender.com/api/amenities/${editingAmenity.id}`, {
       method: "PUT",
-      body
+      body: updateForm,
     });
 
     if (res.ok) {
-      const updated = await res.json();
-      setAmenities(amenities.map(a => a.id === updated.id ? updated : a));
       setShowModal(false);
       setEditingAmenity(null);
-      setFormData({ name: "", description: "", image: null });
+      fetchAmenities();
     }
   };
 
-  const fixedAmenities = amenities.filter(a => a.id >= 1 && a.id <= 4);
-  const userAmenities = amenities.filter(a => a.id > 4);
+  const isFixedAmenity = (id) => [1, 2, 3, 4].includes(id);
 
   return (
     <section className="amenities-section">
       <h2>Amenities</h2>
-      <form onSubmit={handleSubmit} className="amenity-form">
-        <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} required />
-        <input type="text" name="description" placeholder="Description" value={formData.description} onChange={handleChange} required />
-        <input type="file" name="image" accept="image/*" onChange={handleChange} required />
+      <form onSubmit={handleAdd} encType="multipart/form-data" className="amenity-form">
+        <input name="name" type="text" placeholder="Name" value={formData.name} onChange={handleFormChange} required />
+        <input name="description" type="text" placeholder="Description" value={formData.description} onChange={handleFormChange} required />
+        <input name="image" type="file" onChange={handleFormChange} accept="image/*" required />
         <button type="submit">Add Amenity</button>
       </form>
       <p>{status}</p>
 
       <h3>Main Amenities</h3>
       <div className="amenity-list">
-        {fixedAmenities.map((a) => (
+        {amenities.filter((a) => isFixedAmenity(a.id)).map((a) => (
           <div key={a.id} className="amenity">
             <img src={`https://mountainsidenode.onrender.com${a.image}`} alt={a.name} />
+            <h3>{a.name}</h3>
             <p>{a.description}</p>
           </div>
         ))}
@@ -113,25 +109,26 @@ const Amenities = () => {
 
       <h3>Your Experiences</h3>
       <div className="amenity-list">
-        {userAmenities.map((a) => (
+        {amenities.filter((a) => !isFixedAmenity(a.id)).map((a) => (
           <div key={a.id} className="amenity">
             <img src={`https://mountainsidenode.onrender.com${a.image}`} alt={a.name} />
             <h3>{a.name}</h3>
             <p>{a.description}</p>
-            <button onClick={() => handleEdit(a)}>Edit</button>
+            <button onClick={() => openEditModal(a)}>Edit</button>
             <button onClick={() => handleDelete(a.id)}>Delete</button>
           </div>
         ))}
       </div>
 
+      {/* Modal */}
       {showModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3>Edit Amenity</h3>
-            <form onSubmit={handleUpdate}>
-              <input type="text" name="name" value={formData.name} onChange={handleChange} required />
-              <input type="text" name="description" value={formData.description} onChange={handleChange} required />
-              <input type="file" name="image" accept="image/*" onChange={handleChange} />
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Edit Amenity</h2>
+            <form onSubmit={handleEdit}>
+              <input name="name" value={formData.name} onChange={handleFormChange} required />
+              <input name="description" value={formData.description} onChange={handleFormChange} required />
+              <input name="image" type="file" onChange={handleFormChange} />
               <button type="submit">Save</button>
               <button type="button" onClick={() => setShowModal(false)}>Cancel</button>
             </form>
