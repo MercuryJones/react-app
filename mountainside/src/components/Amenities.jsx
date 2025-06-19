@@ -30,14 +30,14 @@ const Amenities = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = new FormData();
-    data.append("name", formData.name);
-    data.append("description", formData.description);
-    if (formData.image) data.append("image", formData.image);
+    const body = new FormData();
+    body.append("name", formData.name);
+    body.append("description", formData.description);
+    if (formData.image) body.append("image", formData.image);
 
     const res = await fetch("https://mountainsidenode.onrender.com/api/amenities", {
       method: "POST",
-      body: data,
+      body
     });
 
     if (res.ok) {
@@ -51,44 +51,44 @@ const Amenities = () => {
     }
   };
 
-  const handleEditClick = (amenity) => {
+  const handleDelete = async (id) => {
+    const res = await fetch(`https://mountainsidenode.onrender.com/api/amenities/${id}`, {
+      method: "DELETE"
+    });
+    if (res.ok) {
+      setAmenities(amenities.filter(a => a.id !== id));
+    }
+  };
+
+  const handleEdit = (amenity) => {
     setEditingAmenity(amenity);
+    setFormData({ name: amenity.name, description: amenity.description, image: null });
     setShowModal(true);
   };
 
-  const handleEditSubmit = async (e) => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
-    const data = new FormData();
-    data.append("name", editingAmenity.name);
-    data.append("description", editingAmenity.description);
-    if (formData.image) data.append("image", formData.image);
+    const body = new FormData();
+    body.append("name", formData.name);
+    body.append("description", formData.description);
+    if (formData.image) body.append("image", formData.image);
 
     const res = await fetch(`https://mountainsidenode.onrender.com/api/amenities/${editingAmenity.id}`, {
       method: "PUT",
-      body: data,
+      body
     });
 
     if (res.ok) {
       const updated = await res.json();
-      setAmenities(amenities.map((a) => (a.id === updated.id ? updated : a)));
+      setAmenities(amenities.map(a => a.id === updated.id ? updated : a));
       setShowModal(false);
       setEditingAmenity(null);
       setFormData({ name: "", description: "", image: null });
     }
   };
 
-  const handleDelete = async (id) => {
-    const res = await fetch(`https://mountainsidenode.onrender.com/api/amenities/${id}`, {
-      method: "DELETE",
-    });
-
-    if (res.ok) {
-      setAmenities(amenities.filter((a) => a.id !== id));
-    }
-  };
-
-  const mainAmenities = amenities.slice(0, 4);
-  const userAmenities = amenities.slice(4);
+  const fixedAmenities = amenities.filter(a => a.id >= 1 && a.id <= 4);
+  const userAmenities = amenities.filter(a => a.id > 4);
 
   return (
     <section className="amenities-section">
@@ -103,7 +103,7 @@ const Amenities = () => {
 
       <h3>Main Amenities</h3>
       <div className="amenity-list">
-        {mainAmenities.map((a) => (
+        {fixedAmenities.map((a) => (
           <div key={a.id} className="amenity">
             <img src={`https://mountainsidenode.onrender.com${a.image}`} alt={a.name} />
             <p>{a.description}</p>
@@ -118,31 +118,19 @@ const Amenities = () => {
             <img src={`https://mountainsidenode.onrender.com${a.image}`} alt={a.name} />
             <h3>{a.name}</h3>
             <p>{a.description}</p>
-            <button onClick={() => handleEditClick(a)}>Edit</button>
+            <button onClick={() => handleEdit(a)}>Edit</button>
             <button onClick={() => handleDelete(a.id)}>Delete</button>
           </div>
         ))}
       </div>
 
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h2>Edit Amenity</h2>
-            <form onSubmit={handleEditSubmit}>
-              <input
-                type="text"
-                name="name"
-                value={editingAmenity.name}
-                onChange={(e) => setEditingAmenity({ ...editingAmenity, name: e.target.value })}
-                required
-              />
-              <input
-                type="text"
-                name="description"
-                value={editingAmenity.description}
-                onChange={(e) => setEditingAmenity({ ...editingAmenity, description: e.target.value })}
-                required
-              />
+        <div className="modal">
+          <div className="modal-content">
+            <h3>Edit Amenity</h3>
+            <form onSubmit={handleUpdate}>
+              <input type="text" name="name" value={formData.name} onChange={handleChange} required />
+              <input type="text" name="description" value={formData.description} onChange={handleChange} required />
               <input type="file" name="image" accept="image/*" onChange={handleChange} />
               <button type="submit">Save</button>
               <button type="button" onClick={() => setShowModal(false)}>Cancel</button>
