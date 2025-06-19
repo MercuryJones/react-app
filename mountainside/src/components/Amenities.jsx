@@ -2,42 +2,12 @@
 import { useState, useEffect } from "react";
 import "./Amenities.css";
 
-const fixedAmenities = [
-  {
-    id: 1,
-    title: "Outdoor Kitchen",
-    description: "Outdoor kitchen appliances for all of your grilling dreams.",
-    image: "https://mountainsidenode.onrender.com/images/kitchen.jpg"
-  },
-  {
-    id: 2,
-    title: "Jet Ski and Paddle Boards",
-    description: "Have a blast on the lake from fast action jetskis to relaxing paddleboards.",
-    image: "https://mountainsidenode.onrender.com/images/ski.jpg"
-  },
-  {
-    id: 3,
-    title: "Outdoor Fire Pit",
-    description: "A quaint fireplace where you and your loved ones can enjoy conversation and s'mores",
-    image: "https://mountainsidenode.onrender.com/images/fire.jpg"
-  },
-  {
-    id: 4,
-    title: "Tanning",
-    description: "Achieve a beautiful bronze from our multiple tanning deck options.",
-    image: "https://mountainsidenode.onrender.com/images/tan.jpg"
-  },
-];
-
 const Amenities = () => {
   const [amenities, setAmenities] = useState([]);
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    image: null
-  });
+  const [formData, setFormData] = useState({ name: "", description: "", image: null });
   const [status, setStatus] = useState("");
-  const [editId, setEditId] = useState(null);
+  const [editingAmenity, setEditingAmenity] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   const fetchAmenities = async () => {
     const res = await fetch("https://mountainsidenode.onrender.com/api/amenities");
@@ -65,53 +35,60 @@ const Amenities = () => {
     data.append("description", formData.description);
     if (formData.image) data.append("image", formData.image);
 
-    if (editId !== null) {
-      const res = await fetch(`https://mountainsidenode.onrender.com/api/amenities/${editId}`, {
-        method: "PUT",
-        body: data
-      });
-      if (res.ok) {
-        fetchAmenities();
-        setEditId(null);
-        setFormData({ name: "", description: "", image: null });
-        setStatus("Amenity updated!");
-      } else {
-        const err = await res.json();
-        setStatus(`Error: ${err.error}`);
-      }
+    const res = await fetch("https://mountainsidenode.onrender.com/api/amenities", {
+      method: "POST",
+      body: data,
+    });
+
+    if (res.ok) {
+      const newAmenity = await res.json();
+      setAmenities([...amenities, newAmenity]);
+      setStatus("Amenity added!");
+      setFormData({ name: "", description: "", image: null });
     } else {
-      const res = await fetch("https://mountainsidenode.onrender.com/api/amenities", {
-        method: "POST",
-        body: data
-      });
-      if (res.ok) {
-        fetchAmenities();
-        setFormData({ name: "", description: "", image: null });
-        setStatus("Amenity added!");
-      } else {
-        const err = await res.json();
-        setStatus(`Error: ${err.error}`);
-      }
+      const error = await res.json();
+      setStatus(`Error: ${error.error}`);
     }
   };
 
-  const handleEdit = (a) => {
-    setEditId(a.id);
-    setFormData({ name: a.name, description: a.description, image: null });
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  const handleEditClick = (amenity) => {
+    setEditingAmenity(amenity);
+    setShowModal(true);
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    const data = new FormData();
+    data.append("name", editingAmenity.name);
+    data.append("description", editingAmenity.description);
+    if (formData.image) data.append("image", formData.image);
+
+    const res = await fetch(`https://mountainsidenode.onrender.com/api/amenities/${editingAmenity.id}`, {
+      method: "PUT",
+      body: data,
+    });
+
+    if (res.ok) {
+      const updated = await res.json();
+      setAmenities(amenities.map((a) => (a.id === updated.id ? updated : a)));
+      setShowModal(false);
+      setEditingAmenity(null);
+      setFormData({ name: "", description: "", image: null });
+    }
   };
 
   const handleDelete = async (id) => {
     const res = await fetch(`https://mountainsidenode.onrender.com/api/amenities/${id}`, {
-      method: "DELETE"
+      method: "DELETE",
     });
+
     if (res.ok) {
       setAmenities(amenities.filter((a) => a.id !== id));
-    } else {
-      const err = await res.json();
-      setStatus(`Error: ${err.error}`);
     }
   };
+
+  const mainAmenities = amenities.slice(0, 4);
+  const userAmenities = amenities.slice(4);
 
   return (
     <section className="amenities-section">
@@ -119,16 +96,16 @@ const Amenities = () => {
       <form onSubmit={handleSubmit} className="amenity-form">
         <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} required />
         <input type="text" name="description" placeholder="Description" value={formData.description} onChange={handleChange} required />
-        <input type="file" name="image" accept="image/*" onChange={handleChange} />
-        <button type="submit">{editId ? "Update Amenity" : "Add Amenity"}</button>
+        <input type="file" name="image" accept="image/*" onChange={handleChange} required />
+        <button type="submit">Add Amenity</button>
       </form>
       <p>{status}</p>
 
       <h3>Main Amenities</h3>
       <div className="amenity-list">
-        {fixedAmenities.map((a) => (
+        {mainAmenities.map((a) => (
           <div key={a.id} className="amenity">
-            <img src={a.image} alt={a.title} />
+            <img src={`https://mountainsidenode.onrender.com${a.image}`} alt={a.name} />
             <p>{a.description}</p>
           </div>
         ))}
@@ -136,18 +113,43 @@ const Amenities = () => {
 
       <h3>Your Experiences</h3>
       <div className="amenity-list">
-        {amenities.map((a) => (
+        {userAmenities.map((a) => (
           <div key={a.id} className="amenity">
             <img src={`https://mountainsidenode.onrender.com${a.image}`} alt={a.name} />
             <h3>{a.name}</h3>
             <p>{a.description}</p>
-            <div className="actions">
-              <button type="button" onClick={() => handleEdit(a)}>Edit</button>
-              <button type="button" onClick={() => handleDelete(a.id)}>Delete</button>
-            </div>
+            <button onClick={() => handleEditClick(a)}>Edit</button>
+            <button onClick={() => handleDelete(a.id)}>Delete</button>
           </div>
         ))}
       </div>
+
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Edit Amenity</h2>
+            <form onSubmit={handleEditSubmit}>
+              <input
+                type="text"
+                name="name"
+                value={editingAmenity.name}
+                onChange={(e) => setEditingAmenity({ ...editingAmenity, name: e.target.value })}
+                required
+              />
+              <input
+                type="text"
+                name="description"
+                value={editingAmenity.description}
+                onChange={(e) => setEditingAmenity({ ...editingAmenity, description: e.target.value })}
+                required
+              />
+              <input type="file" name="image" accept="image/*" onChange={handleChange} />
+              <button type="submit">Save</button>
+              <button type="button" onClick={() => setShowModal(false)}>Cancel</button>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
