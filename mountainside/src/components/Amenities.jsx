@@ -58,7 +58,7 @@ const Amenities = () => {
       <div className="amenity-list">
         {amenities.map((a) => (
           <div key={a.id} className="amenity">
-            <img src={`https://mountainsidenode.onrender.com${amenity.image}`} alt={amenity.title} />
+            <img src={`https://mountainsidenode.onrender.com${a.image}`} alt={a.title} />
             <h3>{a.name}</h3>
             <p>{a.description}</p>
           </div>
