@@ -87,7 +87,7 @@ const Amenities = () => {
   return (
     <section className="amenities-section">
       <h2>Included Amenities</h2>
-      <div className="amenity-list">
+      <div className="static-amenities">
         {staticAmenities.map((a) => (
           <div key={a.id} className="amenity-box">
             <img src={a.image} alt={a.name} />
