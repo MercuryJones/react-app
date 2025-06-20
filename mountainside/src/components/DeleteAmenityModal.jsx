@@ -1,23 +1,34 @@
-// DeleteAmenityModal.jsx
-import "./Modal.css";
+import React from "react";
 
-const DeleteAmenityModal = ({ amenity, onDelete, onClose }) => {
-  const handleConfirm = () => {
-    onDelete();
-    onClose();
+const DeleteAmenityModal = ({ amenity, onClose, onDelete }) => {
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`/api/amenities/${amenity._id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        onDelete(amenity._id); // update UI
+        onClose(); // close modal
+      } else {
+        alert("Error deleting amenity");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error contacting server.");
+    }
   };
 
   return (
-    <div className="w3-modal" style={{ display: "block" }}>
-      <div className="w3-modal-content w3-animate-top">
-        <div className="w3-container">
-          <span onClick={onClose} className="w3-button w3-display-topright">
-            &times;
-          </span>
-          <h3>Are you sure you want to delete {amenity.name}?</h3>
-          <button onClick={handleConfirm}>Yes</button>
-          <button onClick={onClose}>Cancel</button>
-        </div>
+    <div className="modal">
+      <div className="modal-content">
+        <span className="close" onClick={onClose}>
+          &times;
+        </span>
+        <h3>Delete Experience</h3>
+        <p>Are you sure you want to delete this experience?</p>
+        <button onClick={handleDelete}>Yes, Delete</button>
+        <button onClick={onClose}>Cancel</button>
       </div>
     </div>
   );
