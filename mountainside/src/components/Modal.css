@@ -1,6 +1,8 @@
-/* Modal.css */
+/* Modal wrapper */
 .modal {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: fixed;
     z-index: 1000;
     left: 0;
@@ -11,24 +13,59 @@
     background-color: rgba(0, 0, 0, 0.4);
   }
   
+  /* Modal content box */
   .modal-content {
     background-color: #fff;
-    margin: 10% auto;
-    padding: 20px;
+    padding: 20px 30px;
     border: 1px solid #888;
+    border-radius: 10px;
     width: 90%;
-    max-width: 400px;
-    border-radius: 8px;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
     position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   }
   
+  /* Close button */
   .close {
     color: #000;
     position: absolute;
     top: 10px;
     right: 20px;
-    font-size: 28px;
+    font-size: 24px;
     font-weight: bold;
     cursor: pointer;
+  }
+  
+  /* Modal form styling */
+  .modal-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .modal-content input,
+  .modal-content textarea {
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    resize: vertical;
+  }
+  
+  .modal-content button {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #2c7a7b;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .modal-content button:hover {
+    background-color: #285e61;
   }
   
