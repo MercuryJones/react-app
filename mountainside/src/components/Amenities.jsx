@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import EditAmenityModal from "./EditAmenityModal";
 import DeleteAmenityModal from "./DeleteAmenityModal";
-import "./css/Amenities.css";
+import "./Amenities.css";
 
 // Static amenities - these will always appear at the top
 const staticAmenities = [

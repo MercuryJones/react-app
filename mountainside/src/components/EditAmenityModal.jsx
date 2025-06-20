@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../css/Modal.css";
+import "./Modal.css";
 
 const EditAmenityModal = ({ amenity, onClose, onUpdate }) => {
   const [name, setName] = useState(amenity.name);

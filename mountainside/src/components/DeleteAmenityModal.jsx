@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../css/Modal.css";
+import "./Modal.css";
 
 const DeleteAmenityModal = ({ amenity, onClose, onDelete }) => {
   const [result, setResult] = useState("");
