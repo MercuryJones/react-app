@@ -6,32 +6,32 @@ import AddExperienceModal from "./AddExperienceModal";
 import "./Amenities.css";
 
 const staticAmenities = [
-    {
-      id: 1,
-      name: "Outdoor Kitchen",
-      description: "Outdoor kitchen appliances for all of your grilling dreams.",
-      image: "https://mountainsidenode.onrender.com/images/kitchen.jpg",
-    },
-    {
-      id: 2,
-      name: "Jet Ski and Paddle Boards",
-      description: "Have a blast on the lake from fast action jetskis to relaxing paddleboards.",
-      image: "https://mountainsidenode.onrender.com/images/ski.jpg",
-    },
-    {
-      id: 3,
-      name: "Outdoor Fire Pit",
-      description: "A quaint fireplace where you and your loved ones can enjoy conversation and s'mores",
-      image: "https://mountainsidenode.onrender.com/images/fire.jpg",
-    },
-    {
-      id: 4,
-      name: "Tanning",
-      description: "Achieve a beautiful bronze from our multiple tanning deck options.",
-      image: "https://mountainsidenode.onrender.com/images/tan.jpg",
-    },
-  ];
-  
+  {
+    id: 1,
+    name: "Outdoor Kitchen",
+    description: "Outdoor kitchen appliances for all of your grilling dreams.",
+    image: "https://mountainsidenode.onrender.com/images/kitchen.jpg",
+  },
+  {
+    id: 2,
+    name: "Jet Ski and Paddle Boards",
+    description: "Have a blast on the lake from fast action jetskis to relaxing paddleboards.",
+    image: "https://mountainsidenode.onrender.com/images/ski.jpg",
+  },
+  {
+    id: 3,
+    name: "Outdoor Fire Pit",
+    description: "A quaint fireplace where you and your loved ones can enjoy conversation and s'mores",
+    image: "https://mountainsidenode.onrender.com/images/fire.jpg",
+  },
+  {
+    id: 4,
+    name: "Tanning",
+    description: "Achieve a beautiful bronze from our multiple tanning deck options.",
+    image: "https://mountainsidenode.onrender.com/images/tan.jpg",
+  },
+];
+
 const Amenities = () => {
   const [userAmenities, setUserAmenities] = useState([]);
   const [editingAmenity, setEditingAmenity] = useState(null);
@@ -39,28 +39,48 @@ const Amenities = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const fetchAmenities = async () => {
-    const res = await fetch("https://mountainsidenode.onrender.com/api/amenities");
-    const data = await res.json();
-    setUserAmenities(data);
+    try {
+      const res = await fetch("https://mountainsidenode.onrender.com/api/amenities");
+      const data = await res.json();
+      setUserAmenities(data);
+    } catch (err) {
+      console.error("Failed to fetch amenities:", err);
+    }
   };
 
   useEffect(() => {
     fetchAmenities();
   }, []);
 
-  const handleEdit = (updatedAmenity) => {
-    setUserAmenities((prev) => prev.map((a) => (a._id === updatedAmenity._id ? updatedAmenity : a)));
-    setEditingAmenity(null);
+  const handleEdit = async (updatedAmenity) => {
+    try {
+      const res = await fetch(`https://mountainsidenode.onrender.com/api/amenities/${updatedAmenity._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedAmenity),
+      });
+      const data = await res.json();
+      setUserAmenities((prev) => prev.map((a) => (a._id === data._id ? data : a)));
+      setEditingAmenity(null);
+    } catch (err) {
+      console.error("Failed to edit amenity:", err);
+    }
   };
 
   const handleDelete = async (id) => {
-    await fetch(`https://mountainsidenode.onrender.com/api/amenities/${id}`, { method: "DELETE" });
-    setUserAmenities((prev) => prev.filter((a) => a._id !== id));
-    setDeletingAmenity(null);
+    try {
+      await fetch(`https://mountainsidenode.onrender.com/api/amenities/${id}`, {
+        method: "DELETE",
+      });
+      setUserAmenities((prev) => prev.filter((a) => a._id !== id));
+      setDeletingAmenity(null);
+    } catch (err) {
+      console.error("Failed to delete amenity:", err);
+    }
   };
 
-  const handleAdd = (newAmenity) => {
-    setUserAmenities([...userAmenities, newAmenity]);
+  const handleAdd = async (newAmenity) => {
+    setUserAmenities((prev) => [...prev, newAmenity]);
     setIsAddModalOpen(false);
   };
 
@@ -78,7 +98,9 @@ const Amenities = () => {
       </div>
 
       <h2>Your Experiences</h2>
-      <button className="share-button" onClick={() => setIsAddModalOpen(true)}>Share Your Experience</button>
+      <button className="share-button" onClick={() => setIsAddModalOpen(true)}>
+        Share Your Experience
+      </button>
       <div className="amenity-list">
         {userAmenities.map((a) => (
           <div key={a._id} className="amenity">
@@ -93,9 +115,28 @@ const Amenities = () => {
         ))}
       </div>
 
-      {editingAmenity && <EditAmenityModal amenity={editingAmenity} onClose={() => setEditingAmenity(null)} onUpdate={handleEdit} />}
-      {deletingAmenity && <DeleteAmenityModal amenity={deletingAmenity} onClose={() => setDeletingAmenity(null)} onDelete={() => handleDelete(deletingAmenity._id)} />}
-      {isAddModalOpen && <AddExperienceModal onClose={() => setIsAddModalOpen(false)} onAdd={handleAdd} />}
+      {editingAmenity && (
+        <EditAmenityModal
+          amenity={editingAmenity}
+          onClose={() => setEditingAmenity(null)}
+          onUpdate={handleEdit}
+        />
+      )}
+
+      {deletingAmenity && (
+        <DeleteAmenityModal
+          amenity={deletingAmenity}
+          onClose={() => setDeletingAmenity(null)}
+          onDelete={() => handleDelete(deletingAmenity._id)}
+        />
+      )}
+
+      {isAddModalOpen && (
+        <AddExperienceModal
+          onClose={() => setIsAddModalOpen(false)}
+          onAdd={handleAdd}
+        />
+      )}
     </section>
   );
 };
