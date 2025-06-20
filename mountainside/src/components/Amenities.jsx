@@ -6,12 +6,32 @@ import AddExperienceModal from "./AddExperienceModal";
 import "./Amenities.css";
 
 const staticAmenities = [
-  { id: 1, name: "Outdoor Kitchen", description: "Outdoor kitchen appliances for all of your grilling dreams.", image: "/images/kitchen.jpg" },
-  { id: 2, name: "Jet Ski and Paddle Boards", description: "Have a blast on the lake from fast action jetskis to relaxing paddleboards.", image: "/images/ski.jpg" },
-  { id: 3, name: "Outdoor Fire Pit", description: "A quaint fireplace where you and your loved ones can enjoy conversation and s'mores", image: "/images/fire.jpg" },
-  { id: 4, name: "Tanning", description: "Achieve a beautiful bronze from our multiple tanning deck options.", image: "/images/tan.jpg" },
-];
-
+    {
+      id: 1,
+      name: "Outdoor Kitchen",
+      description: "Outdoor kitchen appliances for all of your grilling dreams.",
+      image: "https://mountainsidenode.onrender.com/images/kitchen.jpg",
+    },
+    {
+      id: 2,
+      name: "Jet Ski and Paddle Boards",
+      description: "Have a blast on the lake from fast action jetskis to relaxing paddleboards.",
+      image: "https://mountainsidenode.onrender.com/images/ski.jpg",
+    },
+    {
+      id: 3,
+      name: "Outdoor Fire Pit",
+      description: "A quaint fireplace where you and your loved ones can enjoy conversation and s'mores",
+      image: "https://mountainsidenode.onrender.com/images/fire.jpg",
+    },
+    {
+      id: 4,
+      name: "Tanning",
+      description: "Achieve a beautiful bronze from our multiple tanning deck options.",
+      image: "https://mountainsidenode.onrender.com/images/tan.jpg",
+    },
+  ];
+  
 const Amenities = () => {
   const [userAmenities, setUserAmenities] = useState([]);
   const [editingAmenity, setEditingAmenity] = useState(null);
