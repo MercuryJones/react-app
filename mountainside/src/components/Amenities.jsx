@@ -1,103 +1,97 @@
+// Amenities.jsx
 import { useEffect, useState } from "react";
 import EditAmenityModal from "./EditAmenityModal";
 import DeleteAmenityModal from "./DeleteAmenityModal";
 import "./Amenities.css";
 
-// Static amenities - these will always appear at the top
 const staticAmenities = [
-    {
-        id: 1,
-        name: "Outdoor Kitchen",
-        description: "Outdoor kitchen appliances for all of your grilling dreams.",
-        image: "/images/kitchen.jpg",
-      },
-      {
-        id: 2,
-        name: "Jet Ski and Paddle Boards",
-        description: "Have a blast on the lake from fast action jetskis to relaxing paddleboards.",
-        image: "/images/ski.jpg",
-      },
-      {
-        id: 3,
-        name: "Outdoor Fire Pit",
-        description: "A quaint fireplace where you and your loved ones can enjoy conversation and s'mores",
-        image: "/images/fire.jpg",
-      },
-      {
-        id: 4,
-        name: "Tanning",
-        description: "Achieve a beautiful bronze from our multiple tanning deck options.",
-        image: "/images/tan.jpg",
-      }
+  {
+    id: 1,
+    name: "Outdoor Kitchen",
+    description: "Outdoor kitchen appliances for all of your grilling dreams.",
+    image: "/images/kitchen.jpg",
+  },
+  {
+    id: 2,
+    name: "Jet Ski and Paddle Boards",
+    description: "Have a blast on the lake from fast action jetskis to relaxing paddleboards.",
+    image: "/images/ski.jpg",
+  },
+  {
+    id: 3,
+    name: "Outdoor Fire Pit",
+    description: "A quaint fireplace where you and your loved ones can enjoy conversation and s'mores",
+    image: "/images/fire.jpg",
+  },
+  {
+    id: 4,
+    name: "Tanning",
+    description: "Achieve a beautiful bronze from our multiple tanning deck options.",
+    image: "/images/tan.jpg",
+  },
 ];
 
 const Amenities = () => {
-  const [amenities, setAmenities] = useState([]);
+  const [userAmenities, setUserAmenities] = useState([]);
   const [selectedAmenity, setSelectedAmenity] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const fetchAmenities = async () => {
-    try {
-      const response = await fetch("https://mountainsidenode.onrender.com/api/amenities");
-      const data = await response.json();
-      setAmenities(data);
-    } catch (error) {
-      console.error("Failed to load amenities", error);
-    }
+  const fetchUserAmenities = async () => {
+    const res = await fetch("https://mountainsidenode.onrender.com/api/amenities");
+    const data = await res.json();
+    setUserAmenities(data);
   };
 
   useEffect(() => {
-    fetchAmenities();
+    fetchUserAmenities();
   }, []);
 
-  const handleEditClick = (amenity) => {
-    setSelectedAmenity(amenity);
-    setShowEditModal(true);
+  const handleDelete = async () => {
+    await fetch(`https://mountainsidenode.onrender.com/api/amenities/${selectedAmenity._id}`, {
+      method: "DELETE",
+    });
+    setUserAmenities(userAmenities.filter((a) => a._id !== selectedAmenity._id));
   };
 
-  const handleDeleteClick = (amenity) => {
-    setSelectedAmenity(amenity);
-    setShowDeleteModal(true);
-  };
+  const handleEdit = async (formData) => {
+    const res = await fetch(`https://mountainsidenode.onrender.com/api/amenities/${selectedAmenity._id}`, {
+      method: "PUT",
+      body: formData,
+    });
 
-  const updateAmenity = (updatedAmenity) => {
-    setAmenities((prev) =>
-      prev.map((item) => (item._id === updatedAmenity._id ? updatedAmenity : item))
-    );
-  };
-
-  const removeAmenity = (id) => {
-    setAmenities((prev) => prev.filter((item) => item._id !== id));
+    if (res.ok) {
+      const updatedAmenity = await res.json();
+      setUserAmenities(
+        userAmenities.map((a) => (a._id === updatedAmenity._id ? updatedAmenity : a))
+      );
+    }
+    setShowEditModal(false);
   };
 
   return (
     <section id="amenities">
       <h2>Included Amenities</h2>
       <div className="amenity-grid">
-        {staticAmenities.map((amenity, index) => (
-          <div key={index} className="amenity-card">
-            <img src={amenity.img} alt={amenity.name} />
-            <h3>{amenity.name}</h3>
-            <p>{amenity.description}</p>
+        {staticAmenities.map((a) => (
+          <div key={a.id} className="amenity-card">
+            <img src={a.image} alt={a.name} />
+            <h3>{a.name}</h3>
+            <p>{a.description}</p>
           </div>
         ))}
       </div>
 
       <h2>Your Experiences</h2>
+      <button onClick={() => document.getElementById("shareModal").style.display = "block"}>Share Your Experience</button>
       <div className="amenity-grid">
-        {amenities.map((amenity) => (
-          <div key={amenity._id} className="amenity-card">
-            <img
-              src={`https://mountainsidenode.onrender.com/images/${amenity.img}`}
-              alt={amenity.name}
-            />
-            <h3>{amenity.name}</h3>
-            <p>{amenity.description}</p>
-            <div className="edit-controls">
-              <button onClick={() => handleEditClick(amenity)}>Edit</button>
-              <button onClick={() => handleDeleteClick(amenity)}>Delete</button>
-            </div>
+        {userAmenities.map((a) => (
+          <div key={a._id} className="amenity-card">
+            <img src={`https://mountainsidenode.onrender.com/images/${a.image}`} alt={a.name} />
+            <h3>{a.name}</h3>
+            <p>{a.description}</p>
+            <button onClick={() => { setSelectedAmenity(a); setShowEditModal(true); }}>Edit</button>
+            <button onClick={() => { setSelectedAmenity(a); setShowDeleteModal(true); }}>Delete</button>
           </div>
         ))}
       </div>
@@ -105,16 +99,16 @@ const Amenities = () => {
       {showEditModal && selectedAmenity && (
         <EditAmenityModal
           amenity={selectedAmenity}
-          closeModal={() => setShowEditModal(false)}
-          onSave={updateAmenity}
+          onSave={handleEdit}
+          onClose={() => setShowEditModal(false)}
         />
       )}
 
       {showDeleteModal && selectedAmenity && (
         <DeleteAmenityModal
           amenity={selectedAmenity}
-          closeModal={() => setShowDeleteModal(false)}
-          onDelete={removeAmenity}
+          onDelete={handleDelete}
+          onClose={() => setShowDeleteModal(false)}
         />
       )}
     </section>

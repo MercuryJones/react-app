@@ -1,70 +1,62 @@
-import React, { useState } from "react";
+// EditAmenityModal.jsx
+import { useState } from "react";
 import "./Modal.css";
 
-const EditAmenityModal = ({ amenity, onClose, onUpdate }) => {
-  const [name, setName] = useState(amenity.name);
-  const [description, setDescription] = useState(amenity.description);
-  const [preview, setPreview] = useState(
-    amenity.main_image ? `https://mountainsidenode.onrender.com/images/${amenity.main_image}` : ""
-  );
-  const [file, setFile] = useState(null);
-  const [result, setResult] = useState("");
+const EditAmenityModal = ({ amenity, onSave, onClose }) => {
+  const [formData, setFormData] = useState({
+    name: amenity.name,
+    description: amenity.description,
+    image: null,
+  });
 
-  const handleImageChange = (e) => {
-    setFile(e.target.files[0]);
-    setPreview(URL.createObjectURL(e.target.files[0]));
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: files ? files[0] : value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setResult("Updating...");
+    const data = new FormData();
+    data.append("name", formData.name);
+    data.append("description", formData.description);
+    if (formData.image) data.append("image", formData.image);
 
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("description", description);
-    if (file) formData.append("img", file);
-
-    const response = await fetch(`https://mountainsidenode.onrender.com/api/amenities/${amenity._id}`, {
-      method: "PUT",
-      body: formData,
-    });
-
-    if (response.ok) {
-      const updatedAmenity = await response.json();
-      onUpdate(updatedAmenity);
-      setResult("Updated!");
-      onClose();
-    } else {
-      setResult("Update failed.");
-    }
+    await onSave(data);
   };
 
   return (
     <div className="w3-modal" style={{ display: "block" }}>
-      <div className="w3-modal-content">
+      <div className="w3-modal-content w3-animate-top">
         <div className="w3-container">
-          <span className="w3-button w3-display-topright" onClick={onClose}>
+          <span onClick={onClose} className="w3-button w3-display-topright">
             &times;
           </span>
-          <h2>Edit Amenity</h2>
+          <h3>Edit Amenity</h3>
           <form onSubmit={handleSubmit}>
-            <p>
-              <label>Name:</label>
-              <input value={name} onChange={(e) => setName(e.target.value)} required />
-            </p>
-            <p>
-              <label>Description:</label>
-              <textarea value={description} onChange={(e) => setDescription(e.target.value)} required />
-            </p>
-            <p>
-              <label>Upload new image:</label>
-              <input type="file" accept="image/*" onChange={handleImageChange} />
-            </p>
-            {preview && <img src={preview} alt="Preview" style={{ maxWidth: "100%" }} />}
-            <p>
-              <button type="submit">Save</button>
-            </p>
-            <p>{result}</p>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+            <input
+              type="text"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              required
+            />
+            <input
+              type="file"
+              name="image"
+              accept="image/*"
+              onChange={handleChange}
+            />
+            <button type="submit">Save</button>
           </form>
         </div>
       </div>
