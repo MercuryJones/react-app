@@ -13,7 +13,7 @@ const Contact = () => {
           <p>Have questions or feedback? We’d love to hear from you.</p>
           <form
             className="contact-form"
-            action="https://formspree.io/f/xjvnepzv"
+            action="https://formspree.io/f/movwnjwa"
             method="POST"
           >
             <input type="text" name="name" placeholder="Your Name" required />
