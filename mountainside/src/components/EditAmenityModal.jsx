@@ -70,7 +70,7 @@ const EditAmenityModal = ({ amenity, closeEditModal, updateAmenity }) => {
               <label>Upload New Image:</label>
               <input
                 type="file"
-                name="img"
+                name="image"
                 accept="image/*"
                 onChange={uploadImage}
               />
