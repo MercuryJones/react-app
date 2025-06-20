@@ -20,6 +20,7 @@ const AddExperienceModal = ({ onClose, onAdd }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
     const submission = new FormData();
     submission.append("name", formData.name);
@@ -42,6 +43,7 @@ const AddExperienceModal = ({ onClose, onAdd }) => {
 
       const newAmenity = await res.json();
       onAdd(newAmenity);
+      onClose(); // Close modal after successful add
     } catch (err) {
       setError("Error contacting server");
     }
@@ -51,9 +53,9 @@ const AddExperienceModal = ({ onClose, onAdd }) => {
     <div className="modal">
       <div className="modal-content">
         <span className="close" onClick={onClose}>&times;</span>
-        <h3>Share Your Experience</h3>
+        <h2>Share Your Experience</h2>
         {error && <p className="error">{error}</p>}
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} encType="multipart/form-data">
           <label>Name:</label>
           <input name="name" onChange={handleChange} required />
 
