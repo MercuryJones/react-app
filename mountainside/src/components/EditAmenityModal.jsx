@@ -1,59 +1,70 @@
 import React, { useState } from "react";
-import "./Modal.css";
+import "../css/Modal.css";
 
-const EditAmenityModal = ({ amenity, onClose, onSave }) => {
+const EditAmenityModal = ({ amenity, onClose, onUpdate }) => {
   const [name, setName] = useState(amenity.name);
   const [description, setDescription] = useState(amenity.description);
-  const [imageFile, setImageFile] = useState(null);
-  const [preview, setPreview] = useState(amenity.image);
-  const [status, setStatus] = useState("");
+  const [preview, setPreview] = useState(
+    amenity.main_image ? `https://mountainsidenode.onrender.com/images/${amenity.main_image}` : ""
+  );
+  const [file, setFile] = useState(null);
+  const [result, setResult] = useState("");
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setImageFile(file);
-    setPreview(URL.createObjectURL(file));
+  const handleImageChange = (e) => {
+    setFile(e.target.files[0]);
+    setPreview(URL.createObjectURL(e.target.files[0]));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setResult("Updating...");
 
     const formData = new FormData();
     formData.append("name", name);
     formData.append("description", description);
-    if (imageFile) formData.append("image", imageFile);
+    if (file) formData.append("img", file);
 
-    try {
-      const res = await fetch(`https://mountainsidenode.onrender.com/api/amenities/${amenity.id}`, {
-        method: "PUT",
-        body: formData,
-      });
+    const response = await fetch(`https://mountainsidenode.onrender.com/api/amenities/${amenity._id}`, {
+      method: "PUT",
+      body: formData,
+    });
 
-      if (res.ok) {
-        const updatedAmenity = await res.json();
-        onSave(updatedAmenity);
-      } else {
-        const err = await res.json();
-        setStatus(`Error: ${err.error}`);
-      }
-    } catch (error) {
-      setStatus("Failed to update.");
+    if (response.ok) {
+      const updatedAmenity = await response.json();
+      onUpdate(updatedAmenity);
+      setResult("Updated!");
+      onClose();
+    } else {
+      setResult("Update failed.");
     }
   };
 
   return (
-    <div className="w3-modal">
+    <div className="w3-modal" style={{ display: "block" }}>
       <div className="w3-modal-content">
         <div className="w3-container">
-          <span onClick={onClose} className="w3-button w3-display-topright">&times;</span>
+          <span className="w3-button w3-display-topright" onClick={onClose}>
+            &times;
+          </span>
           <h2>Edit Amenity</h2>
           <form onSubmit={handleSubmit}>
-            <input value={name} onChange={(e) => setName(e.target.value)} required />
-            <input value={description} onChange={(e) => setDescription(e.target.value)} required />
-            <input type="file" onChange={handleFileChange} accept="image/*" />
-            {preview && <img src={preview} alt="preview" style={{ maxHeight: "100px", margin: "10px 0" }} />}
-            <button type="submit">Save</button>
-            <button type="button" onClick={onClose}>Cancel</button>
-            <p>{status}</p>
+            <p>
+              <label>Name:</label>
+              <input value={name} onChange={(e) => setName(e.target.value)} required />
+            </p>
+            <p>
+              <label>Description:</label>
+              <textarea value={description} onChange={(e) => setDescription(e.target.value)} required />
+            </p>
+            <p>
+              <label>Upload new image:</label>
+              <input type="file" accept="image/*" onChange={handleImageChange} />
+            </p>
+            {preview && <img src={preview} alt="Preview" style={{ maxWidth: "100%" }} />}
+            <p>
+              <button type="submit">Save</button>
+            </p>
+            <p>{result}</p>
           </form>
         </div>
       </div>

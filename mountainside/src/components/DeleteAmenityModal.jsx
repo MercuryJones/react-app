@@ -1,38 +1,36 @@
 import React, { useState } from "react";
-import "./Modal.css";
+import "../css/Modal.css";
 
 const DeleteAmenityModal = ({ amenity, onClose, onDelete }) => {
-  const [status, setStatus] = useState("");
+  const [result, setResult] = useState("");
 
   const handleDelete = async () => {
-    try {
-      const res = await fetch(`https://mountainsidenode.onrender.com/api/amenities/${amenity.id}`, {
-        method: "DELETE",
-      });
+    setResult("Deleting...");
 
-      if (res.ok) {
-        onDelete(amenity.id);
-      } else {
-        const err = await res.json();
-        setStatus(`Error: ${err.error}`);
-      }
-    } catch (error) {
-      setStatus("Failed to delete.");
+    const response = await fetch(`https://mountainsidenode.onrender.com/api/amenities/${amenity._id}`, {
+      method: "DELETE",
+    });
+
+    if (response.ok) {
+      setResult("Deleted!");
+      onDelete(amenity._id);
+      onClose();
+    } else {
+      setResult("Delete failed.");
     }
   };
 
   return (
-    <div className="w3-modal">
+    <div className="w3-modal" style={{ display: "block" }}>
       <div className="w3-modal-content">
         <div className="w3-container">
-          <span onClick={onClose} className="w3-button w3-display-topright">&times;</span>
-          <h2>Delete Amenity</h2>
-          <p>Are you sure you want to delete <strong>{amenity.name}</strong>?</p>
-          <div style={{ display: "flex", gap: "10px" }}>
-            <button onClick={handleDelete}>Yes</button>
-            <button onClick={onClose}>No</button>
-          </div>
-          <p>{status}</p>
+          <span className="w3-button w3-display-topright" onClick={onClose}>
+            &times;
+          </span>
+          <h3>Are you sure you want to delete "{amenity.name}"?</h3>
+          <button onClick={handleDelete}>Yes</button>
+          <button onClick={onClose}>No</button>
+          <p>{result}</p>
         </div>
       </div>
     </div>
