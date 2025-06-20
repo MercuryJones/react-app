@@ -25,6 +25,10 @@
   object-fit: cover;
 }
 
+h2 {
+  text-align: center;
+}
+
 
 @media (max-width: 768px) {
   .restaurant-card {
