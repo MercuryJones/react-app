@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import "./Gallery.css";
 
 const images = [
-  "./images/one.jpg",
-  "./images/two.jpg",
-  "./images/three.jpg",
-  "./images/four.jpg",
+  "https://mountainsidenode.onrender.com/images/one.jpg",
+  "https://mountainsidenode.onrender.com/images/two.jpg",
+  "https://mountainsidenode.onrender.com/images/three.jpg",
+  "https://mountainsidenode.onrender.com/images/four.jpg",
 ];
 
 const Gallery = () => {
