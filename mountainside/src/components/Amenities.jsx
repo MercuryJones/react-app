@@ -1,101 +1,122 @@
-// Amenities.jsx
-import { useState, useEffect } from "react";
-import "./Amenities.css";
+import { useEffect, useState } from "react";
 import EditAmenityModal from "./EditAmenityModal";
 import DeleteAmenityModal from "./DeleteAmenityModal";
+import "../css/Amenities.css";
+
+// Static amenities - these will always appear at the top
+const staticAmenities = [
+    {
+        id: 1,
+        name: "Outdoor Kitchen",
+        description: "Outdoor kitchen appliances for all of your grilling dreams.",
+        image: "/images/kitchen.jpg",
+      },
+      {
+        id: 2,
+        name: "Jet Ski and Paddle Boards",
+        description: "Have a blast on the lake from fast action jetskis to relaxing paddleboards.",
+        image: "/images/ski.jpg",
+      },
+      {
+        id: 3,
+        name: "Outdoor Fire Pit",
+        description: "A quaint fireplace where you and your loved ones can enjoy conversation and s'mores",
+        image: "/images/fire.jpg",
+      },
+      {
+        id: 4,
+        name: "Tanning",
+        description: "Achieve a beautiful bronze from our multiple tanning deck options.",
+        image: "/images/tan.jpg",
+      }
+];
 
 const Amenities = () => {
   const [amenities, setAmenities] = useState([]);
-  const [formData, setFormData] = useState({ name: "", description: "", image: null });
-  const [status, setStatus] = useState("");
-  const [editing, setEditing] = useState(null);
-  const [deleting, setDeleting] = useState(null);
+  const [selectedAmenity, setSelectedAmenity] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const fetchAmenities = async () => {
-    const res = await fetch("https://mountainsidenode.onrender.com/api/amenities");
-    const data = await res.json();
-    setAmenities(data);
+    try {
+      const response = await fetch("https://mountainsidenode.onrender.com/api/amenities");
+      const data = await response.json();
+      setAmenities(data);
+    } catch (error) {
+      console.error("Failed to load amenities", error);
+    }
   };
 
   useEffect(() => {
     fetchAmenities();
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    setFormData({ ...formData, [name]: files ? files[0] : value });
+  const handleEditClick = (amenity) => {
+    setSelectedAmenity(amenity);
+    setShowEditModal(true);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const form = new FormData();
-    form.append("name", formData.name);
-    form.append("description", formData.description);
-    form.append("image", formData.image);
-
-    const res = await fetch("https://mountainsidenode.onrender.com/api/amenities", {
-      method: "POST",
-      body: form,
-    });
-
-    if (res.ok) {
-      const newAmenity = await res.json();
-      setAmenities([...amenities, newAmenity]);
-      setFormData({ name: "", description: "", image: null });
-      setStatus("Amenity added!");
-    } else {
-      const error = await res.json();
-      setStatus(`Error: ${error.error}`);
-    }
+  const handleDeleteClick = (amenity) => {
+    setSelectedAmenity(amenity);
+    setShowDeleteModal(true);
   };
 
-  const handleSave = (updatedAmenity) => {
-    setAmenities((prev) => prev.map((a) => (a.id === updatedAmenity.id ? updatedAmenity : a)));
-    setEditing(null);
+  const updateAmenity = (updatedAmenity) => {
+    setAmenities((prev) =>
+      prev.map((item) => (item._id === updatedAmenity._id ? updatedAmenity : item))
+    );
   };
 
-  const handleDelete = (id) => {
-    setAmenities((prev) => prev.filter((a) => a.id !== id));
-    setDeleting(null);
+  const removeAmenity = (id) => {
+    setAmenities((prev) => prev.filter((item) => item._id !== id));
   };
 
   return (
-    <section className="amenities-section">
-      <h2>Amenities</h2>
-      <form onSubmit={handleSubmit} className="amenity-form">
-        <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} required />
-        <input type="text" name="description" placeholder="Description" value={formData.description} onChange={handleChange} required />
-        <input type="file" name="image" onChange={handleChange} required />
-        <button type="submit">Add Amenity</button>
-      </form>
-      <p>{status}</p>
-
-      <h3>Main Amenities</h3>
-      <div className="amenity-list">
-        {amenities.slice(0, 4).map((a) => (
-          <div key={a.id} className="amenity">
-            <img src={`https://mountainsidenode.onrender.com${a.image}`} alt={a.name} />
-            <h3>{a.name}</h3>
-            <p>{a.description}</p>
+    <section id="amenities">
+      <h2>Included Amenities</h2>
+      <div className="amenity-grid">
+        {staticAmenities.map((amenity, index) => (
+          <div key={index} className="amenity-card">
+            <img src={amenity.img} alt={amenity.name} />
+            <h3>{amenity.name}</h3>
+            <p>{amenity.description}</p>
           </div>
         ))}
       </div>
 
-      <h3>Your Experiences</h3>
-      <div className="amenity-list">
-        {amenities.slice(4).map((a) => (
-          <div key={a.id} className="amenity">
-            <img src={`https://mountainsidenode.onrender.com${a.image}`} alt={a.name} />
-            <h3>{a.name}</h3>
-            <p>{a.description}</p>
-            <button onClick={() => setEditing(a)}>Edit</button>
-            <button onClick={() => setDeleting(a)}>Delete</button>
+      <h2>Your Experiences</h2>
+      <div className="amenity-grid">
+        {amenities.map((amenity) => (
+          <div key={amenity._id} className="amenity-card">
+            <img
+              src={`https://mountainsidenode.onrender.com/images/${amenity.img}`}
+              alt={amenity.name}
+            />
+            <h3>{amenity.name}</h3>
+            <p>{amenity.description}</p>
+            <div className="edit-controls">
+              <button onClick={() => handleEditClick(amenity)}>Edit</button>
+              <button onClick={() => handleDeleteClick(amenity)}>Delete</button>
+            </div>
           </div>
         ))}
       </div>
 
-      {editing && <EditAmenityModal amenity={editing} onClose={() => setEditing(null)} onSave={handleSave} />}
-      {deleting && <DeleteAmenityModal amenity={deleting} onClose={() => setDeleting(null)} onDelete={handleDelete} />}
+      {showEditModal && selectedAmenity && (
+        <EditAmenityModal
+          amenity={selectedAmenity}
+          closeModal={() => setShowEditModal(false)}
+          onSave={updateAmenity}
+        />
+      )}
+
+      {showDeleteModal && selectedAmenity && (
+        <DeleteAmenityModal
+          amenity={selectedAmenity}
+          closeModal={() => setShowDeleteModal(false)}
+          onDelete={removeAmenity}
+        />
+      )}
     </section>
   );
 };
