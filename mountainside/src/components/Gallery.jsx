@@ -1,20 +1,25 @@
-import React from 'react';
-import GalleryImage from './GalleryImage';
-import './Gallery.css';
+import React, { useState } from "react";
+import "./Gallery.css";
 
-const galleryImages = ['one.jpg', 'two.jpg', 'three.jpg', 'four.jpg'];
+const images = [
+  "/images/one.jpg",
+  "/images/two.jpg",
+  "/images/three.jpg",
+  "/images/four.jpg",
+];
 
 const Gallery = () => {
+  const [current, setCurrent] = useState(0);
+
+  const next = () => setCurrent((current + 1) % images.length);
+  const prev = () => setCurrent((current - 1 + images.length) % images.length);
+
   return (
-    <section id="gallery" className="gallery">
-      <h2>Gallery</h2>
-      <div className="gallery-grid">
-        {galleryImages.map((image, index) => (
-          <GalleryImage
-            key={index}
-            src={`${import.meta.env.BASE_URL}images/${image}`}
-          />
-        ))}
+    <section className="gallery">
+      <img src={images[current]} alt="Gallery Slide" />
+      <div className="gallery-buttons">
+        <button onClick={prev}>⟨ Prev</button>
+        <button onClick={next}>Next ⟩</button>
       </div>
     </section>
   );

@@ -1,46 +1,34 @@
-/*  AMENITIES STYLING  */
 
-.amenities-section {
-    padding: 2rem;
-    text-align: center;
-  }
-  
-  .static-amenities {
+.amenities-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+    gap: 20px;
+    margin: 20px auto;
+    max-width: 1200px;
   }
   
-  .amenity-box {
-    width: 220px;
+  
+  .amenity-card {
     border: 1px solid #ccc;
-    border-radius: 10px;
-    padding: 1rem;
-    background-color: #fefefe;
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+    padding: 10px;
+    width: 22%;
+    min-width: 250px;
     text-align: center;
+    background-color: white;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
   }
   
-  .amenity-box img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 6px;
+  .amenity-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
   }
   
-  .user-amenities {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1.5rem;
-  }
   
-  /*  Media Queries  */
   @media (max-width: 768px) {
-    .amenity-box {
-      width: 100%;
-      max-width: 300px;
+    .amenity-card {
+      width: 90%;
     }
   }
   
