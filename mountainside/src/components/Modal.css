@@ -33,4 +33,19 @@
     right: 16px;
     top: 8px;
   }
+
+  .modal-close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    background: none;
+    border: none;
+    color: black;
+    cursor: pointer;
+  }
+  .error {
+    color: red;
+    margin-top: 10px;
+  }
   
