@@ -1,70 +1,70 @@
-import React, { useState } from "react";
+// AddExperienceModal.jsx
+import { useState } from "react";
 import "./Modal.css";
 
 const AddExperienceModal = ({ onClose, onAdd }) => {
-  const [newAmenity, setNewAmenity] = useState({
+  const [formData, setFormData] = useState({
     name: "",
     description: "",
+    image: null,
   });
-  const [image, setImage] = useState(null);
   const [error, setError] = useState("");
 
   const handleChange = (e) => {
-    setNewAmenity({ ...newAmenity, [e.target.name]: e.target.value });
-  };
-
-  const handleFileChange = (e) => {
-    setImage(e.target.files[0]);
+    if (e.target.name === "image") {
+      setFormData({ ...formData, image: e.target.files[0] });
+    } else {
+      setFormData({ ...formData, [e.target.name]: e.target.value });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); // Clear previous error
 
-    const formData = new FormData();
-    formData.append("name", newAmenity.name);
-    formData.append("description", newAmenity.description);
-    if (image) formData.append("img", image);
+    const submission = new FormData();
+    submission.append("name", formData.name);
+    submission.append("description", formData.description);
+    if (formData.image) {
+      submission.append("img", formData.image);
+    }
 
     try {
-      const response = await fetch("https://mountainsidenode.onrender.com/api/amenities", {
+      const res = await fetch("https://mountainsidenode.onrender.com/api/amenities", {
         method: "POST",
-        body: formData,
+        body: submission,
       });
 
-      if (!response.ok) {
-        throw new Error("Server returned an error");
+      if (!res.ok) {
+        const err = await res.text();
+        setError(err);
+        return;
       }
 
-      const savedAmenity = await response.json();
-      onAdd(savedAmenity);
-      onClose(); // Close modal after successful add
+      const newAmenity = await res.json();
+      onAdd(newAmenity);
     } catch (err) {
-      setError("Error contacting server. Please try again.");
+      setError("Error contacting server");
     }
   };
 
   return (
     <div className="modal">
       <div className="modal-content">
-        <button className="modal-close" onClick={onClose}>&times;</button>
-        <h2>Share Your Experience</h2>
+        <span className="close" onClick={onClose}>&times;</span>
+        <h3>Share Your Experience</h3>
+        {error && <p className="error">{error}</p>}
         <form onSubmit={handleSubmit}>
-          <label>
-            Title:
-            <input type="text" name="name" value={newAmenity.name} onChange={handleChange} required />
-          </label>
-          <label>
-            Description:
-            <textarea name="description" value={newAmenity.description} onChange={handleChange} required />
-          </label>
-          <label>
-            Upload Image:
-            <input type="file" accept="image/*" onChange={handleFileChange} required />
-          </label>
+          <label>Name:</label>
+          <input name="name" onChange={handleChange} required />
+
+          <label>Description:</label>
+          <input name="description" onChange={handleChange} required minLength={3} />
+
+          <label>Image:</label>
+          <input type="file" name="image" accept="image/*" onChange={handleChange} />
+
           <button type="submit">Submit</button>
         </form>
-        {error && <p className="error">{error}</p>}
       </div>
     </div>
   );
