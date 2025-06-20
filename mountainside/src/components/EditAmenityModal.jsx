@@ -2,10 +2,10 @@
 import React, { useState } from "react";
 import "../components/Modal.css";
 
-const EditAmenityModal = ({ amenity, closeEditModal, updateAmenity }) => {
+const EditAmenityModal = ({ amenity, onClose, onUpdate }) => {
   const [result, setResult] = useState("");
   const [prevSrc, setPrevSrc] = useState(
-    `https://mountainsidenode.onrender.com/images/${amenity.main_image}`
+    `https://mountainsidenode.onrender.com/images/${amenity.image}`
   );
 
   const uploadImage = (event) => {
@@ -28,9 +28,9 @@ const EditAmenityModal = ({ amenity, closeEditModal, updateAmenity }) => {
 
     if (response.status === 200) {
       const updatedAmenity = await response.json();
-      updateAmenity(updatedAmenity);
+      onUpdate(updatedAmenity); // ✅ live update
       setResult("Amenity updated successfully.");
-      closeEditModal(); // ✅ Now closes modal after successful update
+      onClose(); // ✅ close modal
     } else {
       setResult("There was a problem updating the amenity.");
     }
@@ -40,40 +40,22 @@ const EditAmenityModal = ({ amenity, closeEditModal, updateAmenity }) => {
     <div className="w3-modal" style={{ display: "block" }}>
       <div className="w3-modal-content">
         <div className="w3-container">
-          <span
-            className="w3-button w3-display-topright"
-            onClick={closeEditModal}
-          >
+          <span className="w3-button w3-display-topright" onClick={onClose}>
             &times;
           </span>
           <h3>Edit Amenity</h3>
           <form onSubmit={onSubmit}>
             <p>
               <label>Name:</label>
-              <input
-                type="text"
-                name="name"
-                defaultValue={amenity.name}
-                required
-              />
+              <input type="text" name="name" defaultValue={amenity.name} required />
             </p>
             <p>
               <label>Description:</label>
-              <input
-                type="text"
-                name="description"
-                defaultValue={amenity.description}
-                required
-              />
+              <input type="text" name="description" defaultValue={amenity.description} required />
             </p>
             <p>
               <label>Upload New Image:</label>
-              <input
-                type="file"
-                name="image"
-                accept="image/*"
-                onChange={uploadImage}
-              />
+              <input type="file" name="image" accept="image/*" onChange={uploadImage} />
             </p>
             {prevSrc && (
               <img
