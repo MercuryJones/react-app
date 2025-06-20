@@ -1,37 +1,28 @@
-import { Link } from 'react-router-dom';
-import './Contact.css';
+import React from "react";
+import "./Contact.css";
+import Navbar from "./Navbar";
 
 const Contact = () => {
   return (
-    <section className="contact-page">
-      <h2>Contact Us</h2>
-      <p>We’d love to hear from you! Fill out the form below to send us a message.</p>
-
-      <form
-        action="https://formspree.io/f/your_form_id"
-        method="POST"
-        className="contact-form"
-      >
-        <label>
-          Your Name:
-          <input type="text" name="name" required />
-        </label>
-
-        <label>
-          Your Email:
-          <input type="email" name="email" required />
-        </label>
-
-        <label>
-          Your Message:
-          <textarea name="message" rows="5" required></textarea>
-        </label>
-
-        <button type="submit">Send Message</button>
-      </form>
-
-      <Link to="/" className="back-link">← Back to Home</Link>
-    </section>
+    <>
+      <Navbar />
+      <main className="contact-page">
+        <section className="contact-container">
+          <h2>Contact Us</h2>
+          <p>Have questions or feedback? We’d love to hear from you.</p>
+          <form
+            className="contact-form"
+            action="https://formspree.io/f/xjvnepzv"
+            method="POST"
+          >
+            <input type="text" name="name" placeholder="Your Name" required />
+            <input type="email" name="email" placeholder="Your Email" required />
+            <textarea name="message" placeholder="Your Message" required />
+            <button type="submit">Send Message</button>
+          </form>
+        </section>
+      </main>
+    </>
   );
 };
 
