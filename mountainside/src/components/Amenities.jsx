@@ -89,7 +89,7 @@ const Amenities = () => {
       <h2>Included Amenities</h2>
       <div className="amenity-list">
         {staticAmenities.map((a) => (
-          <div key={a.id} className="amenity">
+          <div key={a.id} className="amenity-box">
             <img src={a.image} alt={a.name} />
             <h3>{a.name}</h3>
             <p>{a.description}</p>
