@@ -21,33 +21,35 @@ const AddExperienceModal = ({ onClose, onAdd }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
+  
     const submission = new FormData();
     submission.append("name", formData.name);
     submission.append("description", formData.description);
     if (formData.image) {
-      submission.append("img", formData.image);
+      submission.append("image", formData.image); // fixed here
     }
-
+  
     try {
       const res = await fetch("https://mountainsidenode.onrender.com/api/amenities", {
         method: "POST",
         body: submission,
       });
-
+  
       if (!res.ok) {
         const err = await res.text();
         setError(err);
         return;
       }
-
+  
       const newAmenity = await res.json();
       onAdd(newAmenity);
-      onClose(); // Close modal after successful add
     } catch (err) {
       setError("Error contacting server");
+    } finally {
+      onClose(); // always close modal
     }
   };
+  
 
   return (
     <div className="modal">
